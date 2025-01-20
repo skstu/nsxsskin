@@ -1,0 +1,4 @@
+﻿exdll.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+pluginapi-x86-unicode.lib(pluginapi.obj) : error LNK2026: module unsafe for SAFESEH image.
+     Creating library .\Debug/exdll.lib and object .\Debug/exdll.exp
+.\Debug\exdll.dll : fatal error LNK1281: Unable to generate SAFESEH image.

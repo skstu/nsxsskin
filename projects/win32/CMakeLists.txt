@@ -1,0 +1,39 @@
+project (${entry_name})
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+GFN_PROJECT_SOURCE_GET(${CMAKE_CURRENT_SOURCE_DIR} OUT_HEADER_S OUT_SOURCE_S)
+set(SOURCES ${OUT_HEADER_S} ${OUT_SOURCE_S})
+
+
+if(MSVC)
+    add_compile_options(/wd4996 /wd4267)
+endif()
+
+if(ENABLE_BUILD_STATIC_WIN32)
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_definitions(-DENABLE_BUILD_STATIC_WIN32)
+else()
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
+add_definitions(-DSHARED_IMPLEMENTATION)
+endif()
+
+target_include_directories(${PROJECT_NAME} 
+PRIVATE
+${SOLUTION_INCLUDE_DIR}
+${SOLUTION_ROOT_DIR}/3rdparty/dlfcn-win32/src/
+${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${PROJECT_NAME}
+${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/dl.lib
+${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/stl.lib
+)
+
+if(MSVC)
+#MSVC_LINK_FLAGS_SET_CONSOLE(${PROJECT_NAME})
+if(ENABLE_MSVC_CRT_MT)
+MSVC_CRT_SET(${PROJECT_NAME} "/MT")
+endif(ENABLE_MSVC_CRT_MT)
+MSVC_USE_PCH(${PROJECT_NAME} ${entry}/src/stdafx.h ${entry}/src/stdafx.cpp)
+endif()

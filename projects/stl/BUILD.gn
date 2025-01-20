@@ -1,0 +1,11 @@
+static_library("stl") {
+  sources = [
+    "directory.cc",
+    "file.cc",
+    "path.cc",
+    "stl.cc",
+    "string.cc",
+    "time.cc",
+  ]
+  public_configs = [ "//build/deps:openssl" ]
+}
