@@ -38,6 +38,7 @@ NSISAPI InitInstallPage(HWND hwndParent, int string_size, TCHAR* variables, stac
 	Global::Get()->SetProductLicenceFilename(shared::Win::PathFixedW(wstrResDir + L"//" + licencefile));
 	Global::Get()->SetProductServiceProtocol(shared::Win::PathFixedW(licencefile));
 	Global::Get()->SetSkinDir(shared::Win::PathFixedW(wstrResDir + L"/skin.zip"));
+	//MessageBoxW(hwndParent, wstrResDir.c_str(), NULL, MB_TOPMOST);
 	//frame->Start();
 	//MessageBoxW(hwndParent, wstrResDir.c_str(), NULL, MB_TOPMOST);
 	//ui::WindowThread windowThread(wstrResDir);
