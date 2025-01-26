@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project (nsisxs)
+project (nsxsskin)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -46,6 +46,11 @@ set_target_properties(zlib PROPERTIES FOLDER "3rdparty")
 set(FMT_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(${SOLUTION_ROOT_DIR}/3rdparty/fmt/ "fmt")
 set_target_properties(fmt PROPERTIES FOLDER "3rdparty")
+
+set(CMAKE_DEBUG_POSTFIX
+    ""
+    CACHE STRING "..." FORCE)
+add_subdirectory(${SOLUTION_ROOT_DIR}/3rdparty/minizip/ minizip)
 
 GFN_SET_TARGET_OUTDIR("")
 

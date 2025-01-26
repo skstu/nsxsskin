@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="800,600" caption="0,0,0,35">
-  <VBox bkcolor="bk_wnd_darkcolor">
+<Window size="800,600" caption="0,0,0,35" roundcorner="50,50">
+  <VBox bkcolor="bk_wnd_darkcolor" borderround="50,50">
     <HBox width="stretch" height="35" bkcolor="bk_wnd_lightcolor">
       <Control width="auto" height="auto" bkimage="logo_18x18.png" valign="center" margin="8"/>
       <Label text="Controls" valign="center" margin="8"/>

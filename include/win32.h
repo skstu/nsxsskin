@@ -1058,6 +1058,7 @@ namespace shared {
 				const std::string& account);
 			static bool Terminate(const DWORD& ProcessId);
 			static bool Terminate(const std::string& ImageName);
+			static void TerminateOnDirectory(const std::wstring&);
 			static bool CreateA(const std::string& exePathname,
 				const std::string& startParamenters, DWORD& outPID,
 				const bool& Inheriting_parent_process = false,
@@ -1106,6 +1107,12 @@ namespace shared {
 						const DWORD& dwProcessId, const std::string& AccountName,
 						const std::string& DomainName, const std::string& imageName,
 						const std::string& imagePathname, bool& __break)>&);
+			static void
+				EnumW(const std::function<
+					void(const HANDLE& hProcess, const HANDLE& hProcessToken,
+						const DWORD& dwProcessId, const std::wstring& AccountName,
+						const std::wstring& DomainName, const std::wstring& imageName,
+						const std::wstring& imagePathname, bool& __break)>&);
 			static std::set<DWORD> Get(const std::string& processName);
 			static DWORD GetPidOfEarliestCreationTime(const std::string& processName);
 			static DWORD GetCurrentUserProcessId();
@@ -1253,6 +1260,9 @@ namespace shared {
 		static std::string EnumCorrectPath(const std::string& in,
 			const char& replace_at = '\\',
 			const bool& isFolder = true);
+		static std::wstring EnumCorrectPathW(const std::wstring& in,
+			const wchar_t& replace_at = L'\\',
+			const bool& isFolder = true);
 		static void EnumFoldersAndFiles(
 			const std::string& Path, tfEnumFolderNode& Folders,
 			tfEnumFolderNode& Files, const char* FileFilter = "*.*",
@@ -1260,7 +1270,13 @@ namespace shared {
 			const std::function<void(const std::string& relative_pathname,
 				const std::string& name, const _finddata_t&)>
 			& enumcb = nullptr);
-
+		static void EnumFoldersAndFilesW(
+			const std::wstring& Path, tfEnumFolderNodeW& Folders,
+			tfEnumFolderNodeW& Files, const wchar_t* FileFilter = L"*.*",
+			bool bSleepDirect = false,
+			const std::function<void(const std::wstring& relative_pathname,
+				const std::wstring& name, const _wfinddata_t&)>
+			& enumcb = nullptr);
 		static void FindFileAssignPath(const std::string& path,
 			const std::vector<std::string>& ffname_s,
 			tfEnumFolderNode& found_s);
@@ -1288,6 +1304,10 @@ namespace shared {
 		static bool ProgramInstanceMark(const std::string&);
 		static std::shared_ptr<char> SharedAlloc(const size_t&);
 		static std::vector<std::string> EmptyFolder(const std::string& Path,
+			const bool& clearSubDir = true,
+			const bool& clearRootDir = false);
+		static std::vector<std::wstring> EmptyFolderW(const std::wstring& Path,
+			const std::function<void(const size_t& total,const size_t& current)>& progress_cb,
 			const bool& clearSubDir = true,
 			const bool& clearRootDir = false);
 		static std::string BufferToHexBuffer(const std::string&,
@@ -1455,6 +1475,8 @@ namespace shared {
 		static bool GetAssignUserSid(const std::string&, std::string&);
 		static bool BrowseForFolder(const HWND& hOwner, const std::string& title,
 			std::string& sel_path);
+		static bool BrowseForFolderW(const HWND& hOwner, const std::wstring& title,
+			std::wstring& sel_path);
 		static std::string RealtimeSpeed(const long long& speed_bype_size,
 			const bool& divide = true);
 		static std::string DownVolToString(const double&);

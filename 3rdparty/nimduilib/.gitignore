@@ -22,3 +22,4 @@ bin/layouts.exe
 bin/move_control.exe
 bin/richlist.exe
 bin/virtualbox.exe
+build_x86

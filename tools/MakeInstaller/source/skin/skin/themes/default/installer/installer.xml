@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+shadowattached="true" renderalpha="true" roundcorner="6,6" shadowimage="file='images/first.png' corner='6,6,6,6'" shadowcorner="6,6,6,6" custom_shadow="6,6,6,6"
+-->
+<Window size="800,600" caption="0,0,0,50" roundcorner="50,50" shadowattached="true" shadowimage="images/first.png" shadowcorner="0,0,0,0">
+	<VBox>
+	<!--borderround="6,6" bkimage="file='images/first.png' corner='3,3,3,3'"-->
+		<TabBox name="6ABC148B55CB" margin="0,0,0,0">
+		<!--First Page bkimage="images/first.png"-->
+			<VBox  bkimage="images/first.png" margin="0,0,0,0" userdata="frist">
+				<VBox name="7DFBC6A2665E" float="true" margin="30,474,0,0" height="90">
+				<VBox>
+				<HBox height="30">	
+				<CheckBox margin="0,0,0,0" name="B43143269D13" selected="false" normalimage="images/btn_Expand.png" selectednormalimage="images/btn_Collapse.png"/>
+				<Label margin="5,1,0,0" name="1D3548D2524E" font="arial_14" text="自定义选项"  normaltextcolor="blue" />
+				</HBox>
+				<HBox name="4DE049B7A30A" visible="false" margin="20,0,0,0" bordersize="1" bordercolor="custom01" width="420" height="32">
+				<RichEdit name="203DF43449B5" font="arial_14" margin="5,8,0,0" multiline="false" hscrollbar="false" vscrollbar="false" wanttab="false" rich="false" maxchar="260"
+				text="C:/ProgramData/MarsProjects/"
+				>	
+				</RichEdit>
+				<Button margin="0,6,6,0" name="00891DC7AC71" bkimage="images/btn_folder.png"/>
+				</HBox>
+				</VBox>
+				<HBox margin="0,10,0,0" >
+				<CheckBox name="76FE7E4AF3F5" selected="true" selectednormalimage="images/btn_AgreeToAgreement.png" normalimage="images/btn_DisagreeWithAgreement.png"/>
+				<HBox margin="5,0,0,0">
+				<Label font="arial_14" text="我已阅读并同意"  normaltextcolor="black" />
+				<Button name="9490DE14EAE8" margin="0,-3,0,0" text="《用户服务协议》" font="system_underline_16" normaltextcolor="blue"/>
+				<Label font="arial_14" text="和"  normaltextcolor="black" />
+				<Button name="152924DB4F21"  margin="0,-3,0,0" text="《隐私协议》" font="system_underline_16" normaltextcolor="blue" />
+				</HBox>
+				</HBox>
+				</VBox>		
+
+				<Button float="true" margin="575,482,0,0" name="BBC8BDA5BA57" normalimage="images/btn_StartInstallation-2.png" hotimage="images/btn_StartInstallation-1.png" disabledimage="images/btn_StartInstallation-0.png"/>
+			</VBox>			
+			<!--Finished-->
+			<VBox bkimage="images/finished.png" margin="0,0,0,0" userdata="finished">
+				<HBox margin="0,458,0,0">
+					<Control width="211"/>
+					<HBox>
+						<CheckBox name="381708398D6C" margin="0,0,0,0" selected="true" selectednormalimage="images/cb_selected.png" normalimage="images/cb_unselected.png"/>
+						<Label font="arial_14" text="创建桌面快捷方式"  margin="5,0,0,0" normaltextcolor="white" />
+					</HBox>
+					<Control width="20"/>
+					<HBox>
+					<CheckBox name="D5CCAE68E612" selected="true" selectednormalimage="images/cb_selected.png" normalimage="images/cb_unselected.png"/>
+					<Label font="arial_14" text="立即运行软件"  margin="5,0,0,0" normaltextcolor="white" />
+					</HBox>
+					<HBox>
+					<CheckBox name="10B20870BECC" selected="false" selectednormalimage="images/cb_selected.png" normalimage="images/cb_unselected.png"/>
+					<Label font="arial_14" text="开机自启动"  margin="5,0,0,0" normaltextcolor="white" />
+					</HBox>
+					<Control />
+				</HBox>
+				<Button float="true" margin="325,399,0,0" name="4F63DD47F434" bkimage="images/btn_finished.png"/>
+			</VBox>	
+				<!--Uninstall-->
+			<VBox bkimage="images/bg_uninstall.png" margin="0,0,0,0" userdata="uninstall">
+				<HBox margin="0,400,0,0">
+					<Control />
+					<Label name="3BE4ED1D6E27" font="arial_16" text=""  margin="0,0,0,0" normaltextcolor="white" />
+					<Control />
+				</HBox>
+				<Button float="true" margin="240,470,0,0" name="171E129508A9" bkimage="images/btn_uninstall.png"/>
+				<Button float="true" margin="410,470,0,0" name="9457BEB19312" bkimage="images/btn_cancel_un.png"/>
+			</VBox>
+			<!--Service Protocol-->
+			<VBox bkimage="images/bg_service_protocol.png" margin="0,0,0,0" userdata="protocol">
+				<VBox height="60">
+				<Label font="system_bold_22" text="软件许可协议"  margin="30,15,0,0" normaltextcolor="white" />
+				</VBox>
+				<HBox>
+				<Control width="30"/>
+				<VBox>
+				<RichEdit class="prompt" font="system_18" name="5BFC918D0F55" bkcolor="bk_wnd_lightcolor" width="stretch" height="stretch"
+				multiline="true" vscrollbar="true" hscrollbar="false" autovscroll="false"
+				normaltextcolor="darkcolor" wantreturnmsg="true" rich="true" readonly="true"/>
+				</VBox>
+				<Control width="30"/>
+				</HBox>
+				<HBox margin="30,0,30,0" height="40" bkcolor="white">
+					<Control />
+					<Button margin="0,0,0,0" name="94972605BEE1" width="40" bkcolor="blue" text="确定" font="arial_16" normaltextcolor="white"/>
+					<Control />
+				</HBox>
+				<Control height="20"/>
+			</VBox>
+			<!--Slogan-->
+			<VBox bkimage="images/slogan1.png" margin="0,0,0,0" userdata="slogan"/>
+			<VBox bkimage="images/slogan2.png" margin="0,0,0,0" userdata="slogan"/>
+			<VBox bkimage="images/slogan3.png" margin="0,0,0,0" userdata="slogan"/>
+		</TabBox>
+
+		<HBox float="true" width="stretch" height="50" margin="0,0,0,0">
+			<Control />
+			<Button class="btn_wnd_white_min" margin="0,10,15,0" name="minbtn"/>
+			<Button class="btn_wnd_white_close" margin="0,10,15,0" name="0BA894CC18C3"/>	
+		</HBox>	
+		
+		<VBox name="D46BC09BB829" visible="false" float="true" margin="51,552,0,0" height="50" width="705">
+			<Progress class="progress_green" name="5598ED5488CB" height="10" value="0" max="100" margin="0,0,-2,0" />
+			<Control height="10"/>
+			<HBox>
+				<Control />
+				<Label name="B3D764CF3B0C" font="arial_14" text="已完成"  margin="0,0,0,0" normaltextcolor="white" />
+				<Control width="5"/>
+				<Label name="A779051F6427" font="system_16" text="0%"  margin="0,-3,0,0" normaltextcolor="white" />
+				<Control />
+			</HBox>
+		</VBox>
+	</VBox>
+</Window>

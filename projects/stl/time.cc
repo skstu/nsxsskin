@@ -1,4 +1,5 @@
-﻿#include "stdafx.h"
+﻿#include "stl.hpp"
+using namespace stl;
 using namespace std;
 
 unsigned long Time::GetDateDay() {

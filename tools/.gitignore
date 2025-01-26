@@ -1,0 +1,7 @@
+# Prerequisites
+NSIS/Plugins/x86-unicode/nsDuiSkin.exp
+NSIS/Plugins/x86-unicode/nsDuiSkin.lib
+NSIS/Plugins/x86-unicode/nsDuiSkin.pdb
+MakeInstaller/output
+MakeInstaller/source/*.7z
+MakeInstaller/FilesToInstall

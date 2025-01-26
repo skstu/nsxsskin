@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Windows>
+    <!-- 进度 -->
+    <VerticalLayout >
+        <VerticalLayout width="550" height="295" bkimage="uni_top_bg.png">
+            <VerticalLayout height="50" inset="20,15,0,0">
+				<Label font="2" text="XXXX客户端卸载" align="left" valign="center" textcolor="0xFFFFFFFF"/>
+			</VerticalLayout>
+            <VerticalLayout>
+				<Control height="70" />
+                <Text height="30" font="5" text="感谢使用产品名称" textpadding="320,0,0,0" valign="vcenter" align="left" textcolor="0xFFFFFFFF" showhtml="false"/>
+                <Text height="30" font="5" text="期待下次更好的相遇！" textpadding="320,0,0,0" valign="vcenter" align="left" textcolor="0xFFFFFFFF" showhtml="false"/>
+                <Control />
+			</VerticalLayout>                
+        </VerticalLayout>
+        <VerticalLayout bkimage="file='bottom_bg.png' corner='10,0,10,10'" >  
+			<Control height="15"/>
+            <Label name="slrUniProgressLabel" height="30" font="2" text="正在卸载" textpadding="25,0,0,0" align="left" valign="center" textcolor="0xFF000000"/>
+            <Control height="5"/>
+			<Slider name="slrUnInstProgress" padding="25,0,0,0" height="12" width="500" mouse="false" foreimage="process_top.png" bkimage="process_bottom.png" thumbsize="0,0" bkcolor="#FFD8D8D8"/>
+            <Control />
+        </VerticalLayout>   
+    </VerticalLayout>	
+</Windows>

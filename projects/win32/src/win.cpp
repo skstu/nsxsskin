@@ -1717,6 +1717,56 @@ namespace shared {
 		} while (0);
 		return result;
 	}
+	std::vector<std::wstring> Win::EmptyFolderW(const std::wstring& inPath,
+		const std::function<void(const size_t& total, const size_t& current)>& progress_cb,
+		const bool& clearSubDir /*= true*/,
+		const bool& clearRootDir /*= false*/){
+		std::vector<std::wstring> result;
+		std::wstring Path(inPath);
+		if (Path.empty())
+			return result;
+		if (!AccessW(Path))
+			return result;	
+		if (Path[Path.size() - 1] != L'/' || Path[Path.size() - 1] != L'\\')
+			Path.append(L"\\");
+		std::map<std::wstring, std::wstring> dirs, files;
+		EnumFoldersAndFilesW(Path, dirs, files, L"*.*", clearSubDir);
+
+		const size_t file_total = files.size();
+		size_t current = 0;
+		progress_cb(file_total, current);
+		for (auto& file : files) {
+			result.emplace_back(file.first);
+			int r = ::_wremove((Path + file.first).c_str());
+			++current;
+			progress_cb(file_total, current);
+		}
+		std::vector<std::wstring> sortdirs;
+		for (auto& dir : dirs)
+			sortdirs.emplace_back(dir.first);
+		std::sort(sortdirs.begin(), sortdirs.end(),
+			[&](const auto& obj1, const auto& obj2) -> bool {
+				return obj1.size() > obj2.size();
+			});
+		for (auto& dir : sortdirs) {
+			std::wstring temp{ dir };
+			if (temp.empty())
+				continue;
+			if (*std::prev(Path.end()) == L'\\' || *std::prev(Path.end()) == L'/') {
+				while (*temp.begin() == L'\\' || *temp.begin() == L'/') {
+					temp.erase(temp.begin());
+					if (temp.empty())
+						break;
+				}
+				::_wrmdir((Path + temp).c_str());
+				continue;
+			}
+			::_wrmdir((Path + dir).c_str());
+		}
+		if (clearRootDir)
+			::_wrmdir(Path.c_str());
+		return result;
+	}
 	std::vector<std::string>
 		Win::EmptyFolder(const std::string& Path, const bool& clearSubDir /*= true*/,
 			const bool& clearRootDir /*= false*/) {
@@ -2637,6 +2687,40 @@ namespace shared {
 		} while (0);
 		return result;
 	}
+	std::wstring Win::EnumCorrectPathW(const std::wstring& in,
+		const wchar_t& replace_at /*= '\\'*/,
+		const bool& isFolder /*= true*/) {
+		std::wstring result{ in };
+
+		if (result.empty())
+			return result;
+
+		// 1. 将所有反斜杠和斜杠替换为统一的 replace_at 分隔符
+		std::replace(result.begin(), result.end(), L'/', replace_at);
+		std::replace(result.begin(), result.end(), L'\\', replace_at);
+
+		// 2. 移除路径中的连续分隔符（例如 `\\` 或 `//`）
+		size_t pos = 0;
+		while ((pos = result.find({ replace_at, replace_at }, pos)) != std::wstring::npos) {
+			result.replace(pos, 2, 1, replace_at);  // 将连续的两个分隔符替换为一个
+		}
+
+		// 3. 如果是文件夹路径，确保末尾有一个分隔符
+		if (isFolder) {
+			if (result.empty() || result.back() != replace_at) {
+				result.push_back(replace_at);
+			}
+		}
+		// 4. 如果不是文件夹路径，确保没有前导分隔符
+		else {
+			if (!result.empty() && result.front() == replace_at) {
+				result.erase(0, 1);  // 移除前导分隔符
+			}
+		}
+
+		return result;
+	}
+
 	void Win::FindFileAssignPathOnce(const std::string& path,
 		const std::vector<std::string>& ffname_s,
 		tfEnumFolderNode& found_s) {
@@ -2700,6 +2784,97 @@ namespace shared {
 				if (enumcb)
 					enumcb(pathname, identify, (findData.attrib & _A_SUBDIR));
 			});
+	}
+	void Win::EnumFoldersAndFilesW(
+		const std::wstring& Path, tfEnumFolderNodeW& Folders, tfEnumFolderNodeW& Files,
+		const wchar_t* FileFilter /*= "*.*"*/, bool bSleepDirect /*= false*/,
+		const std::function<void(const std::wstring&, const std::wstring&,
+			const _wfinddata_t&)>& enumcb /*= nullptr*/) {
+		if (Path.empty())
+			return;
+		std::vector<std::wstring> Paths{ Path };
+		std::intptr_t firstIndes{ -1 };
+		std::wstring path_pos;
+		std::set<std::wstring> havedone;
+		do {
+			if (Paths.empty())
+				break;
+			auto begin = Paths.begin();
+			std::wstring TargetPath(*begin);
+			Paths.erase(begin);
+			if (*std::prev(TargetPath.end()) != L'\\' &&
+				*std::prev(TargetPath.end()) != L'/') {
+				TargetPath.push_back(L'\\');
+			}
+			path_pos = TargetPath;
+			havedone.insert(path_pos);
+			TargetPath.append(FileFilter);
+			_wfinddata64i32_t FindData = { 0 };
+			firstIndes = _wfindfirst(TargetPath.c_str(), &FindData);
+			do {
+				if (firstIndes < 0)
+					break;
+				bool _break = false;
+				do {
+					if (!::wcscmp(FindData.name, L".") || !::wcscmp(FindData.name, L".."))
+						continue;
+					if (bSleepDirect) {
+						if (FindData.attrib & _A_SUBDIR) {
+							auto the = path_pos + L"\\" + FindData.name + L"\\";
+							if (havedone.find(the) == havedone.end()) {
+								Paths.emplace_back(the);
+								the.erase(the.find(Path), Path.size());
+								Folders.emplace(
+									std::make_pair(EnumCorrectPathW(the), FindData.name));
+								if (enumcb) {
+									enumcb(the, FindData.name, FindData);
+								}
+								break;
+							}
+							else
+								_break = true;
+						}
+						else {
+							auto the = path_pos + L"\\" + FindData.name;
+							the.erase(the.find(Path), Path.size());
+							Files.emplace(std::make_pair(EnumCorrectPathW(the, L'\\', false),
+								FindData.name));
+							if (enumcb) {
+								enumcb(the, FindData.name, FindData);
+							}
+						}
+						break;
+					}
+					else {
+						if (FindData.attrib & _A_SUBDIR) {
+							auto the = path_pos + L"\\" + FindData.name + L"\\";
+							the.erase(the.find(Path), Path.size());
+							Folders.emplace(
+								std::make_pair(EnumCorrectPathW(the), FindData.name));
+							if (enumcb) {
+								enumcb(the, FindData.name, FindData);
+							}
+							break;
+						}
+						auto the = path_pos + L"\\" + FindData.name;
+						the.erase(the.find(Path), Path.size());
+						Files.emplace(
+							std::make_pair(EnumCorrectPathW(the, L'\\', false), FindData.name));
+						if (enumcb) {
+							enumcb(the, FindData.name, FindData);
+						}
+					}
+				} while (0);
+				if (_break)
+					break;
+				::memset(&FindData, 0x00, sizeof(FindData));
+				if (_wfindnext(firstIndes, &FindData) < 0)
+					break;
+			} while (1);
+		} while (1);
+		if (firstIndes >= 0) {
+			::_findclose(firstIndes);
+		}
 	}
 	void Win::EnumFoldersAndFiles(
 		const std::string& Path, tfEnumFolderNode& Folders, tfEnumFolderNode& Files,
@@ -4025,7 +4200,45 @@ namespace shared {
 		} while (0);
 		return result;
 	}
+	bool Win::BrowseForFolderW(const HWND& hOwner, const std::wstring& title,
+		std::wstring& sel_path) {
+		sel_path.clear();
+		wchar_t selPath[MAX_PATH] = { 0 };
+		BROWSEINFOW bi;
+		bi.hwndOwner = hOwner;
+		bi.pidlRoot = nullptr;
+		bi.pszDisplayName = nullptr;
+		bi.lpszTitle = title.c_str();
+		bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_STATUSTEXT;
+		bi.lParam = (LPARAM)L"C:\\Program Files";
+		bi.iImage = 0;
+		bi.lpfn = [](HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData) -> int {
+			switch (uMsg) {
+			case BFFM_INITIALIZED: // 选择文件夹对话框初始化
+				// 设置默认路径为lpData即'D:\'
+				::SendMessageW(hwnd, BFFM_SETSELECTIONW, TRUE, lpData);
+				// 在STATUSTEXT区域显示当前路径
+				::SendMessageW(hwnd, BFFM_SETSTATUSTEXTW, 0, lpData);
+				// 设置选择文件夹对话框的标题
+				//::SetWindowTextW(hwnd, L"请先设置个工作目录");
+				break;
+			case BFFM_SELCHANGED: {
+				wchar_t pszPath[_MAX_PATH] = { 0 };
+				::SHGetPathFromIDListW((LPCITEMIDLIST)lParam, pszPath);
+				::SendMessageW(hwnd, BFFM_SETSTATUSTEXTW, TRUE, (LPARAM)pszPath);
+			} break;
+			}
+			return 0;
+			};
 
+		LPITEMIDLIST pidl = ::SHBrowseForFolderW(&bi);
+		if (!pidl)
+			return false;
+		if (!::SHGetPathFromIDListW(pidl, selPath) || !selPath[0])
+			return false;
+		sel_path.append(selPath, __min(sizeof(selPath), ::wcslen(selPath)));
+		return true;
+	}
 	bool Win::BrowseForFolder(const HWND& hOwner, const std::string& title,
 		std::string& sel_path) {
 		sel_path.clear();

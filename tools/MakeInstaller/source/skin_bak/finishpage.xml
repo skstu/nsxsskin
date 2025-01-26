@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Windows>
+    <!-- 完成 -->
+    <VerticalLayout >
+        <VerticalLayout height="250" bkimage="top_bg.png">
+			<VerticalLayout height="50" inset="20,15,0,0">
+				<Label font="0" text="XXXX客户端安装" align="left" valign="center" textcolor="0xFFFFFFFF"/>
+			</VerticalLayout>
+			<VerticalLayout>
+				<HorizontalLayout>
+					<Label font="6" text="产品名称•产品名称" textpadding="0,0,0,40" align="center" textcolor="0xFFFFFFFF"/>
+				</HorizontalLayout>
+			</VerticalLayout>				
+		</VerticalLayout>
+		<VerticalLayout bkcolor="0xFFFFFFFF">
+            <Control height="50" />
+            <HorizontalLayout>
+                <Control />
+                <Button name="btnRun" width="187" height="42"  text="开始使用" font="4" textcolor="0xFFFFFFFF" normalimage="btn_install_normal.png" hotimage="btn_install_hover.png" pushedimage="btn_install_pushed.png" disabledimage="btn_install_disabled.png"/>
+                <Control />
+            </HorizontalLayout>
+            
+        </VerticalLayout>
+    </VerticalLayout>
+</Windows>

@@ -32,7 +32,6 @@ typedef wchar_t TCHAR;
 #endif
 #endif
 
-
 // program
 #define _tenviron   _wenviron
 #define __targv     __wargv
@@ -48,10 +47,14 @@ typedef wchar_t TCHAR;
 #define _tprintf    wprintf
 #define _vftprintf  vfwprintf
 #define _vsntprintf _vsnwprintf
+
+#ifdef _vstprintf
+#undef _vstprintf
 #if defined(_MSC_VER) && (_MSC_VER<=1310)
 #	define _vstprintf  vswprintf
 #else
 #	define _vstprintf  _vswprintf
+#endif
 #endif
 
 // scanfs
@@ -69,7 +72,10 @@ typedef wchar_t TCHAR;
 #define _tcsncpy    wcsncpy
 #define _tcsrchr    wcsrchr
 #define _tcsstr     wcsstr
+#ifdef _tcstok
+#undef _tcstok
 #define _tcstok     wcstok
+#endif
 
 // string comparisons
 #define _tcscmp     wcscmp
@@ -221,8 +227,15 @@ typedef char TCHAR;
 #endif
 
 // is functions (the same in Unicode / ANSI)
+#ifdef _istgraph
+#undef _istgraph
 #define _istgraph   isgraph
+#endif
+#ifdef _istascii
+#undef _istascii
 #define _istascii   __isascii
+#endif
+
 
 #define __TFILE__ _T(__FILE__)
 #define __TDATE__ _T(__DATE__)

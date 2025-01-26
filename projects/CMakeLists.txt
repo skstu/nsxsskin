@@ -13,7 +13,8 @@ foreach(entry ${entries})
    add_subdirectory(${entry})
  #====================================================================================
  elseif(${entry_name} STREQUAL "win32" OR 
- ${entry_name} STREQUAL "stl")
+ ${entry_name} STREQUAL "stl" OR
+ ${entry_name} STREQUAL "zipcc")
  GFN_SET_TARGET_OUTDIR(${SOLUTION_ROOT_DIR} "bin" "objs" "libs")
  add_subdirectory(${entry})
  set(project_folder_name "")

@@ -1,6 +1,7 @@
-﻿#include "stdafx.h"
+﻿#include "stl.hpp"
+using namespace std;
 using namespace stl;
-
+#if 0
 std::wstring Conv::U8StringToWString(const std::string& input) {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	return converter.from_bytes(input);
@@ -34,3 +35,4 @@ std::u16string Conv::U32StringToU16String(const std::u32string& input) {
 	auto u8 = U32StringToU8String(input);
 	return U8StringToU16String(u8);
 }
+#endif

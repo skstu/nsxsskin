@@ -11,6 +11,10 @@ endif()
 add_definitions(-DENABLE_BUILD_STATIC_WIN32 -DUSING_XS_SHARED)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+set(platform_name x64)
+if(${CMAKE_VS_PLATFORM_NAME} STREQUAL "Win32")
+  set(platform_name x86)
+endif()
 
 target_include_directories(${PROJECT_NAME}
 PRIVATE 
@@ -24,14 +28,13 @@ ${SOLUTION_ROOT_DIR}/projects/chromium/include/
 
 target_link_directories(${PROJECT_NAME}
 PRIVATE
-${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/
+${SOLUTION_ROOT_DIR}/libs/${platform_name}/${VS_CONFIGURATION_TYPE}/
 )
 
 target_link_libraries(${PROJECT_NAME}
-${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/dl.lib
-${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/stl.lib
-${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/fmt.lib
-${SOLUTION_ROOT_DIR}/libs/${CMAKE_VS_PLATFORM_NAME}/${VS_CONFIGURATION_TYPE}/win32.lib
+${SOLUTION_ROOT_DIR}/libs/${platform_name}/${VS_CONFIGURATION_TYPE}/stl.lib
+${SOLUTION_ROOT_DIR}/libs/${platform_name}/${VS_CONFIGURATION_TYPE}/fmt.lib
+${SOLUTION_ROOT_DIR}/libs/${platform_name}/${VS_CONFIGURATION_TYPE}/win32.lib
 )
 
 if(MSVC)

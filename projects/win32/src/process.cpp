@@ -287,6 +287,46 @@ namespace shared {
 		SK_CLOSE_HANDLE(hProcess);
 		return result;
 	}
+	void Win::Process::TerminateOnDirectory(const std::wstring& dir) {
+		if (dir.empty())
+			return;
+		const auto self = GetCurrentProcessId();
+		std::wstring ready_root = IConv::ToLowerW(dir);
+		for (auto it = ready_root.begin(); it != ready_root.end();) {
+			if (*it == L'\\' || *it == '/')
+				it = ready_root.erase(it);
+			else
+				++it;
+		}
+		EnumW([&](
+			const HANDLE& handle,
+			const HANDLE& handle_token,
+			const DWORD& pid,
+			const std::wstring& account,
+			const std::wstring& domain,
+			const std::wstring& image,
+			const std::wstring& image_path,
+			bool& __break) {
+				do {
+					if (image_path.empty() || image.empty() || pid <= 4)
+						break;
+					if (self == pid)
+						break;
+					std::wstring dir = PathnameToPathW(image_path);
+					dir = IConv::ToLowerW(dir);
+					for (auto it = dir.begin(); it != dir.end();) {
+						if (*it == L'\\' || *it == '/')
+							it = dir.erase(it);
+						else
+							++it;
+					}
+					if (dir.find(ready_root) == std::wstring::npos)
+						break;
+
+					Terminate(pid);
+				} while (0);
+			});
+	}
 	bool Win::Process::Terminate(const std::string& ImageName) {
 		bool result = false;
 		do {
@@ -495,6 +535,99 @@ namespace shared {
 						break;
 				}
 				flag = ::Process32Next(snapshot, &ProcessEntry32);
+			}
+		} while (0);
+		SK_CLOSE_HANDLE(snapshot);
+	}
+	void Win::Process::EnumW(
+		const std::function<void(const HANDLE&, const HANDLE&, const DWORD&, const std::wstring&, const std::wstring&, const std::wstring&, const std::wstring&, bool& __break)>& enum_cb) {
+		HANDLE snapshot = nullptr;
+		do {
+			PROCESSENTRY32W ProcessEntry32;
+			ProcessEntry32.dwSize = sizeof(ProcessEntry32);
+			snapshot = ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+			if (!snapshot)
+				break;
+			BOOL flag = Process32FirstW(snapshot, &ProcessEntry32);
+			while (flag) {
+				if (ProcessEntry32.szExeFile[0]) {
+					HANDLE hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, ProcessEntry32.th32ProcessID);
+					if (!hProcess)
+						hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, ProcessEntry32.th32ProcessID);
+					if (!hProcess)
+						hProcess = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ, FALSE, ProcessEntry32.th32ProcessID);
+					HANDLE hProcessToken = nullptr;
+					std::wstring imagePathname;
+					wchar_t AccountName[_MAX_PATH] = { 0 };
+					DWORD nAccountName = _MAX_PATH;
+					wchar_t DomainName[_MAX_PATH] = { 0 };
+					DWORD nDomainName = _MAX_PATH;
+					std::wstring image = ProcessEntry32.szExeFile;
+					DWORD ProcessId = ProcessEntry32.th32ProcessID;
+					if (hProcess) {
+						DWORD dwPath = _MAX_PATH;
+						std::wstring wstrPath;
+						wstrPath.resize(_MAX_PATH);
+						if (::QueryFullProcessImageNameW(hProcess, 0, &wstrPath[0], &dwPath)) {
+							wstrPath.resize(dwPath);
+							imagePathname = wstrPath;
+						}
+						else {
+							dwPath = ::GetProcessImageFileNameW(hProcess, &wstrPath[0], wstrPath.size());
+							if (dwPath) {
+								wstrPath.resize(dwPath);
+								imagePathname = wstrPath;
+							}
+						}
+
+						char* tokenInfoBuffer = nullptr;
+						do {
+							if (!::OpenProcessToken(hProcess, TOKEN_QUERY, &hProcessToken))
+								break;
+							DWORD returnLen = 0;
+							::GetTokenInformation(hProcessToken, TOKEN_INFORMATION_CLASS::TokenUser, nullptr, 0, &returnLen);
+							if (returnLen <= 0)
+								break;
+							DWORD dwInBufferSize = returnLen;
+							tokenInfoBuffer = new char[dwInBufferSize];
+							::memset(tokenInfoBuffer, 0x00, dwInBufferSize);
+							if (!::GetTokenInformation(hProcessToken, TOKEN_INFORMATION_CLASS::TokenUser, tokenInfoBuffer, dwInBufferSize, &returnLen))
+								break;
+							PTOKEN_USER pTokenUser = reinterpret_cast<PTOKEN_USER>(tokenInfoBuffer);
+							SID_NAME_USE sid_name_user;
+							if (!::LookupAccountSidW(NULL, pTokenUser->User.Sid, AccountName, &nAccountName, DomainName, &nDomainName, &sid_name_user))
+								break;
+						} while (0);
+						SK_DELETE_PTR_BUFFER(tokenInfoBuffer);
+					}
+					bool _break = false;
+					if (enum_cb) {
+						std::wstring account_name, domain_name;
+						if (nDomainName > 0) {
+							domain_name = std::wstring(DomainName, nDomainName);
+						}
+						if (nAccountName > 0) {
+							account_name = std::wstring(AccountName, nAccountName);
+						}
+						enum_cb
+						(
+							hProcess,
+							hProcessToken,
+							ProcessId,
+							account_name.c_str(),
+							domain_name.c_str(),
+							image,
+							imagePathname,
+							_break
+						);
+					}
+
+					SK_CLOSE_HANDLE(hProcessToken);
+					SK_CLOSE_HANDLE(hProcess);
+					if (_break)
+						break;
+				}
+				flag = ::Process32NextW(snapshot, &ProcessEntry32);
 			}
 		} while (0);
 		SK_CLOSE_HANDLE(snapshot);

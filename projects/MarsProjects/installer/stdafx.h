@@ -1,4 +1,4 @@
-﻿#if !defined(__F782F3C4_D41B_4C5F_A029_03505D3AEC30__)
+#if !defined(__F782F3C4_D41B_4C5F_A029_03505D3AEC30__)
 #define __F782F3C4_D41B_4C5F_A029_03505D3AEC30__
 
 #define PROJECTS_ROOT L"%AppData%\\MarsPlatform\\"

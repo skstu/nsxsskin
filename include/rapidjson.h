@@ -1,6 +1,6 @@
 ﻿#ifndef __RAPID_JSON_H_
 #define __RAPID_JSON_H_
-#include "stl.h"
+#include "stl.hpp"
 #include "../3rdparty/rapidjson/include/rapidjson/document.h"
 #include "../3rdparty/rapidjson/include/rapidjson/rapidjson.h"
 #include "../3rdparty/rapidjson/include/rapidjson/reader.h"
