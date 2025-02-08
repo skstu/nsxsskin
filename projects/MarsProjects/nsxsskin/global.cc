@@ -65,10 +65,30 @@ void Global::SetInstallerProcessType(const ProcessType& type){
 	std::lock_guard<std::mutex> lock{ *mtx_ };
 	installer_process_type_ = type;
 }
+void Global::SetProductVersion(const std::wstring& ver){
+	std::lock_guard<std::mutex> lock{ *mtx_ };
+	product_version_ = ver;
+}
+const std::wstring& Global::GetProductVersion() const{
+	std::lock_guard<std::mutex> lock{ *mtx_ };
+	return product_version_;
+}
+const std::vector<std::wstring>& Global::GetRMDirs() const{
+	std::lock_guard<std::mutex> lock{ *mtx_ };
+	return rmdirs_;
+}
+void Global::SetRMDirs(const std::wstring& str){
+	std::lock_guard<std::mutex> lock{ *mtx_ };
+	rmdirs_ = stl::String::WStringSplit(str, L",");
+}
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-Global::Global() = default;
-Global::~Global() = default;
+Global::Global() {
+	product_install_dir_ = shared::Win::SHGetKnownFolderPathW(FOLDERID_RoamingAppData);
+	product_install_dir_ = shared::Win::PathFixedW(product_install_dir_ + L"\\MarsProjects\\");
+}
+Global::~Global() {
+}
 static Global* __gspGlobal = nullptr;
 Global* Global::Get() {
 	if (!__gspGlobal)

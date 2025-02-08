@@ -1948,10 +1948,10 @@ void Window::Paint()
 			UiRect rcRootPadding = m_pRoot->GetLayout()->GetPadding();
 
 			//考虑圆角
-			rcRootPadding.left += 1;
-			rcRootPadding.top += 1;
-			rcRootPadding.right += 1;
-			rcRootPadding.bottom += 1;
+			rcRootPadding.left += m_szRoundCorner.cx;
+			rcRootPadding.top += m_szRoundCorner.cy;
+			rcRootPadding.right += m_szRoundCorner.cx;
+			rcRootPadding.bottom += m_szRoundCorner.cy;
 
 			m_renderContext->RestoreAlpha(rcNewPaint, rcRootPadding);
 		}

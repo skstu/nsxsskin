@@ -59,6 +59,7 @@
 	<TextColor name="custom001" value="#ff006AB9" />
 	<TextColor name="custom002" value="#ff006BC0" />
 	<TextColor name="custom003" value="#ff006CD0" />
+	<TextColor name="custom004" value="#ff2879ff" />
 	<!-- 文字色值，不带透明层 -->
 	<TextColor name="textdefaultcolor" value="#ff333333" />
 	<TextColor name="textdefaultdisablecolor" value="#ffa1aebc" />

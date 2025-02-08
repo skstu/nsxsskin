@@ -1720,13 +1720,13 @@ namespace shared {
 	std::vector<std::wstring> Win::EmptyFolderW(const std::wstring& inPath,
 		const std::function<void(const size_t& total, const size_t& current)>& progress_cb,
 		const bool& clearSubDir /*= true*/,
-		const bool& clearRootDir /*= false*/){
+		const bool& clearRootDir /*= false*/) {
 		std::vector<std::wstring> result;
 		std::wstring Path(inPath);
 		if (Path.empty())
 			return result;
 		if (!AccessW(Path))
-			return result;	
+			return result;
 		if (Path[Path.size() - 1] != L'/' || Path[Path.size() - 1] != L'\\')
 			Path.append(L"\\");
 		std::map<std::wstring, std::wstring> dirs, files;
@@ -2079,6 +2079,20 @@ namespace shared {
 		return result;
 	}
 
+	std::wstring Win::SHGetKnownFolderPathW(const GUID& guid) {
+		std::wstring result;
+		PWSTR path = NULL;
+		do {
+			HRESULT hr = SHGetKnownFolderPath(guid, 0, NULL, &path);
+			if (FAILED(hr))
+				break;
+			result = path;
+		} while (0);
+		if (path) {
+			CoTaskMemFree(path);
+		}
+		return result;
+	}
 	std::wstring Win::GetSpecialFolderLocationW(const int& csidl) {
 		std::wstring result;
 		LPITEMIDLIST ppidl = nullptr;
@@ -4221,6 +4235,7 @@ namespace shared {
 				::SendMessageW(hwnd, BFFM_SETSTATUSTEXTW, 0, lpData);
 				// 设置选择文件夹对话框的标题
 				//::SetWindowTextW(hwnd, L"请先设置个工作目录");
+				SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 800, 600, SWP_NOMOVE);
 				break;
 			case BFFM_SELCHANGED: {
 				wchar_t pszPath[_MAX_PATH] = { 0 };
@@ -4258,6 +4273,7 @@ namespace shared {
 				::SendMessage(hwnd, BFFM_SETSTATUSTEXTA, 0, lpData);
 				// 设置选择文件夹对话框的标题
 				//::SetWindowTextA(hwnd, "请先设置个工作目录");
+				//SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 1024, 768, SWP_NOMOVE);
 				break;
 			case BFFM_SELCHANGED: // 选择文件夹变更时
 			{

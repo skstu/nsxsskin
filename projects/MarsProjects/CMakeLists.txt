@@ -18,8 +18,7 @@ foreach(entry ${entries})
  set_target_properties(${entry_name} PROPERTIES FOLDER ${project_folder_name})
  GFN_SET_TARGET_OUTDIR("")
  ]]
-  elseif(${entry_name} STREQUAL "installer" OR ${entry_name} STREQUAL
-                                               "nsxsskin")
+  elseif(${entry_name} STREQUAL "nsxsskin")
     gfn_set_target_outdir(${SOLUTION_ROOT_DIR} "bin" "objs" "libs")
     add_subdirectory(${entry})
     get_filename_component(base_path ${entry} DIRECTORY)

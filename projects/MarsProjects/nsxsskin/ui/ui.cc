@@ -22,11 +22,11 @@ void UIFrame::Init() {
 	ui::GlobalManager::Startup(path + LR"(\skin\)", ui::CreateControlCallback(), false);
 #endif
 
-	ui::GlobalManager::EnableAutomation();
+	//ui::GlobalManager::EnableAutomation();
 
 	installer_ = new Installer(Global::Get()->GetInstallerProcessType());
 	// 创建一个默认带有阴影的居中窗口
-	installer_->Create(NULL, kClassNameInstaller, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0,false);
+	installer_->Create(NULL, kClassNameInstaller, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0, true);
 	installer_->CenterWindow();
 	installer_->ShowWindow();
 }

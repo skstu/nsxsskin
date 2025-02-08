@@ -42,6 +42,10 @@ public:
 	const std::wstring& GetSkinDir() const;
 	const ProcessType& GetInstallerProcessType() const;
 	void SetInstallerProcessType(const ProcessType&);
+	void SetProductVersion(const std::wstring&);
+	const std::wstring& GetProductVersion() const;
+	const std::vector<std::wstring>& GetRMDirs() const;
+	void SetRMDirs(const std::wstring&);
 private:
 	std::shared_ptr<std::mutex> mtx_ = std::make_shared<std::mutex>();
 	std::wstring product_name_;
@@ -49,7 +53,9 @@ private:
 	std::wstring product_service_protocol_;
 	std::wstring product_program_main_;
 	std::wstring product_licence_filename_;
+	std::wstring product_version_ = L"1.0.0.1";
 	std::wstring skin_dir_;
+	std::vector<std::wstring> rmdirs_;
 	ProcessType installer_process_type_ = ProcessType::Install;
 };
 

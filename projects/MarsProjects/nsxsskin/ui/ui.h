@@ -10,6 +10,9 @@ namespace ui {
 		Installing = 2,
 		Installed = 3,
 		InstallFailed = 4,
+		Uninstalling = 5,
+		Uninstalled = 6,
+		UninstallFailed = 7,
 	};
 	enum PageType {
 	First = 0,
@@ -81,10 +84,14 @@ namespace ui {
 		void OnSwitchSlogan() const;
 		void OnInstallProgress();
 		bool OnBtnInstallFinished(EventArgs*);
-		bool OnBtnServiceProtocol(EventArgs*);
+		bool OnBtnInstallFinishedOk(EventArgs*);
+		bool OnBtnServiceProtocolOk(EventArgs*);
 		bool OnBtnSelectInstallDir(EventArgs*);
 		bool OnBtnUninstallStartup(EventArgs*);
 		bool OnBtnUninstallCancel(EventArgs*);
+		bool OnBtnServiceProtocolEvent(EventArgs*);
+		bool OnEditUserConnent(EventArgs*);
+		bool OnEditUserDescribe(EventArgs*);
 	private:
 		CheckBox* checkbox_poweron_ = nullptr;
 		CheckBox* checkbox_startup_ = nullptr;
@@ -94,6 +101,7 @@ namespace ui {
 		Button* btn_system_close_ = nullptr;
 		Button* btn_install_startup_ = nullptr;
 		TabBox* tabbox_root_ = nullptr;
+		TabBox* tabbox_root_un_ = nullptr;
 		nbase::WeakCallbackFlag slogan_timer_;
 		Progress* progress_ = nullptr;
 		Label* progress_text_ = nullptr;
@@ -107,9 +115,18 @@ namespace ui {
 		stl::tfThreads threads_;
 		RichEdit* edit_install_path_ = nullptr;
 		RichEdit* edit_service_protocol_ = nullptr;
+		RichEdit* edit_user_describe_ = nullptr;
+		RichEdit* edit_user_connect_ = nullptr;
+		Button* btn_service_protocol_ok_ = nullptr;
 		Button* btn_uninstall_cancel_ = nullptr;
 		Button* btn_uninstall_startup_ = nullptr;
+		Button* btn_uninstall_cancel2_ = nullptr;
+		Button* btn_uninstall_startup2_ = nullptr;
+		Button* btn_uninstall_finished_ok_ = nullptr;
+		Button* btn_uninstall_finished_ = nullptr;
+		HBox* hbox_uninstall_finished_ = nullptr;
 		Label* label_goodbye_ = nullptr;
+		Label* label_homepage_version_ = nullptr;
 		std::atomic_bool open_ = false;
 		void InstallProc();
 		void NotifyMessageProc();

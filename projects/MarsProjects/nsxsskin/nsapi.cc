@@ -1,8 +1,9 @@
 ﻿#include "stdafx.h"
 
+#if _DEBUG
 extern "C" {
 	__declspec(dllexport) void OpenUI() {
-		Global::Get()->SetInstallerProcessType(ProcessType::Install);
+		Global::Get()->SetInstallerProcessType(ProcessType::Uninstall);
 		Global::Get()->SetSkinDir(LR"(C:\Users\k34ub\source\skstu\nsxsskin\tools\MakeInstaller\source\skin\skin\)");
 		ui::UIFrame::Get()->Start();
 	}
@@ -10,6 +11,7 @@ extern "C" {
 		ui::UIFrame::Destroy();
 	}
 }
+#endif
 
 #define NSISAPI extern "C" __declspec(dllexport) void __cdecl 
 
@@ -20,6 +22,10 @@ static UINT_PTR PluginCallback(enum NSPIM msg)
 
 // 初始化安装程序自定义页面
 NSISAPI InitInstallPage(HWND hwndParent, int string_size, TCHAR* variables, stack_t** stacktop, extra_parameters* extra) {
+	HANDLE hMutex = CreateMutexW(NULL, FALSE, L"XSInstallerProjectsProcessMutex");
+	if (ERROR_ALREADY_EXISTS == GetLastError()) {
+		return;
+	}
 	NSIS_INIT_EXTRA_PARAMETERS(extra);
 	//MessageBoxW(NULL, __FUNCTIONW__, NULL, MB_TOPMOST);
 	EXDLL_INIT();
@@ -29,11 +35,14 @@ NSISAPI InitInstallPage(HWND hwndParent, int string_size, TCHAR* variables, stac
 	wchar_t resdir[MAX_PATH] = { 0 };
 	wchar_t licencefile[MAX_PATH] = { 0 };
 	wchar_t defaultInstallDir[MAX_PATH] = { 0 };
+	wchar_t product_version[MAX_PATH] = { 0 };
 	PopStringW(resdir);
 	PopStringW(licencefile);
 	PopStringW(defaultInstallDir);
+	PopStringW(product_version);
 	std::wstring wstrResDir(resdir);
 	Global::Get()->SetInstallerProcessType(ProcessType::Install);
+	Global::Get()->SetProductVersion(product_version);
 	Global::Get()->SetProductInstallDir(shared::Win::PathFixedW(defaultInstallDir));
 	Global::Get()->SetProductLicenceFilename(shared::Win::PathFixedW(wstrResDir + L"//" + licencefile));
 	Global::Get()->SetProductServiceProtocol(shared::Win::PathFixedW(licencefile));
@@ -91,16 +100,22 @@ NSISAPI InitUnInstallPage(HWND hwndParent, int string_size, TCHAR* variables, st
 	NSIS_INIT_EXTRA_PARAMETERS(extra);
 	//MessageBoxW(NULL, __FUNCTIONW__, NULL, MB_TOPMOST);
 	EXDLL_INIT();
+
+	SetProcessDPIAware();
+
 	g_hwndParent = hwndParent;
 	//"$PLUGINSDIR\" "$PLUGINSDIR\${INSTALL_LICENCE_FILENAME}" "$INSTALL_DEFALT_SETUPPATH\"
 	extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 	wchar_t resdir[MAX_PATH] = { 0 };
 	wchar_t instDir[MAX_PATH] = { 0 };
+	wchar_t rmdirs[MAX_PATH * 10] = { 0 };
 	PopStringW(resdir);
 	PopStringW(instDir);
+	PopStringW(rmdirs);
 	std::wstring wstrResDir(resdir);
 	Global::Get()->SetInstallerProcessType(ProcessType::Uninstall);
 	Global::Get()->SetProductInstallDir(instDir);
+	Global::Get()->SetRMDirs(rmdirs);
 	const std::wstring skinPath = shared::Win::PathFixedW(wstrResDir + L"/skin.zip");
 	Global::Get()->SetSkinDir(skinPath);
 #if 0

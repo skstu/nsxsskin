@@ -2,6 +2,7 @@
 
 int main(int argc, char* argv[]) {
 	HMODULE hDll = LoadLibraryW(LR"(C:\Users\k34ub\source\skstu\nsxsskin\bin\x86\Debug\nsxsskin.dll)");
+	//HMODULE hDll = LoadLibraryW(LR"(C:\Users\k34ub\source\skstu\nsxsskin\bin\x86\Debug\xsnsskin.dll)");
 	typedef void(*tfOpenUI)(void);
 	typedef void(*tfCloseUI)(void);
 
@@ -18,5 +19,8 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 	} while (1);
+
+
+	
 	return 0;
 }

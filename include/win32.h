@@ -1203,6 +1203,7 @@ namespace shared {
 		static std::wstring GetAppDataPathW();
 		static std::string GetSpecialFolderLocationA(const int&);
 		static std::wstring GetSpecialFolderLocationW(const int&);
+		static std::wstring SHGetKnownFolderPathW(const GUID& guid);
 		static std::string GetModuleNameA(const bool& RemoveSuffix = false,
 			const HINSTANCE& hModule = nullptr);
 		static std::wstring GetModuleNameW(const bool& RemoveSuffix = false,
